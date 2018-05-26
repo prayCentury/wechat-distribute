@@ -81,4 +81,41 @@ public class AccountInfoServiceImpl implements AccountInfoService {
         }
         return jsonObject;
     }
+
+    @Override
+    public JSONObject testService(String code) {
+        JSONObject jsonObject = new JSONObject();
+        JSONObject openIdJson = WXAppletUserInfo.getSessionKeyOropenid(code);
+        String openId = openIdJson.getString("openid");
+        if(StringUtils.isEmpty(openId)){
+            jsonObject.put("code",Constant.ERROR_CODE);
+            jsonObject.put("note","微信code不能为空！");
+        }else {
+            AccountInfoModel accountInfoModel = new AccountInfoModel();
+            //1.判断数据库中是否存在openid
+            try {
+                Integer isExistOpenId = accountInfoDao.existOpenId(openId);
+                //不存在分配新的账号密码
+                if(isExistOpenId == 0){
+                    Integer minId = accountInfoDao.selMinId();
+                    //(1)分发账号密码
+                    accountInfoModel = accountInfoDao.distributeInfo(openId,minId);
+                    //(2)更新该次分发的账号密码状态、openid 、时间
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+                    accountInfoDao.insertInfo(openId,Long.valueOf(formatter.format(new Date())),minId,"testt");
+                }else {//存在查询原分配的账号密码
+                    accountInfoModel = accountInfoDao.findByOpenId(openId);
+                }
+                jsonObject.put("code",Constant.SUCCESS_CODE);
+                jsonObject.put("note",Constant.SUCCESS_NOTE);
+                jsonObject.put("result",accountInfoModel);
+            }catch (Exception e){
+                jsonObject.put("code",Constant.ERROR_CODE);
+                jsonObject.put("note",e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        return jsonObject;
+    }
 }

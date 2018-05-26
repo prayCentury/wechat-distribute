@@ -14,4 +14,7 @@ import java.util.List;
  */
 public interface AccountInfoService {
     JSONObject findByOpenId(GetOpenIdModel getOpenIdModel);
+
+
+    JSONObject testService(String code);
 }
