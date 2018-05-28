@@ -7,6 +7,8 @@ import com.pray.service.AccountInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.models.auth.In;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,8 +65,39 @@ public class MyController {
     @RequestMapping(value = "/getInfo",method = RequestMethod.POST)
     public String getInfo(@ApiParam(name = "getOpenIdModel", value = "", required = true)
                               @RequestBody GetOpenIdModel getOpenIdModel){
+        logger.debug(getOpenIdModel.toString());
         JSONObject jsonObject = accountInfoService.findByOpenId(getOpenIdModel);
+        logger.debug("返回结果：" + jsonObject.toJSONString());
         return jsonObject.toJSONString();
+    }
+
+    @RequestMapping(value = "/distribute",method = RequestMethod.GET)
+    @ApiOperation(notes = "distribute", value = "distribute", tags = "已分配账户数")
+    public String distributeAccount(Integer type , String secretStr ,String dateTime){
+        String returnStr = "";
+        JSONObject jsonObject = new JSONObject();
+        if(type ==1){
+            if(!secretStr.equals("yulutongsecretStr")){
+                returnStr = "提示：育路通密钥有误！" ;
+            }else {
+                jsonObject.put("已分配账户总数",accountInfoService.distributeAccount());
+                returnStr = jsonObject.toJSONString();
+            }
+        }else if(type ==2){
+            if( StringUtils.isEmpty(secretStr) || !secretStr.equals("yulutongsecretStr")){
+                returnStr = "提示：育路通密钥有误！" ;
+            }else if(StringUtils.isEmpty(dateTime) || dateTime.length() != 8){
+                returnStr = "提示：日期格式输入有误！如：20180808" ;
+            }else {
+                jsonObject.put(dateTime + "分配账户数:",accountInfoService.oneDayDistributeAccount(dateTime));
+
+                returnStr = jsonObject.toJSONString();
+            }
+        }else {
+            returnStr = "提示：输入查询类型有误！" ;
+        }
+
+        return returnStr;
     }
 
 }

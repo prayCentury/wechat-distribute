@@ -51,4 +51,19 @@ public interface AccountInfoDao {
      */
     @Select("select t.scusername,t.scpassword from taccount t where openid = #{openid}")
     AccountInfoModel findByOpenId(@Param("openid") String openid);
+
+
+    /**
+     * 查询已分配账户数
+     * @return
+     */
+    @Select("select COUNT(1) from taccount t where t.isdistribute ='1'")
+    Integer distributeAccount();
+
+    /**
+     * 查询某天分配的账户数
+     * @return
+     */
+    @Select("select COUNT(1) from taccount t where t.time = #{dateTime}")
+    Integer oneDayDistributeAccount(String dateTime);
 }

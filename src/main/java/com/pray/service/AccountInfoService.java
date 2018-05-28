@@ -17,4 +17,8 @@ public interface AccountInfoService {
 
 
     JSONObject testService(String code);
+
+    Integer distributeAccount();
+
+    Integer oneDayDistributeAccount(String dateTime);
 }

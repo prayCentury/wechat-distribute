@@ -34,7 +34,13 @@ public class AccountInfoServiceImpl implements AccountInfoService {
     public JSONObject findByOpenId(GetOpenIdModel getOpenIdModel) {
         String weChatCode = getOpenIdModel.getWeChatCode();
         String nickName = getOpenIdModel.getNickName();
+
         JSONObject jsonObject = new JSONObject();
+        if(StringUtils.isEmpty(nickName)){
+            jsonObject.put("code",Constant.ERROR_CODE);
+            jsonObject.put("note","nickName不能为空！");
+            return jsonObject;
+        }
         //首先判断是对应小程序发过来的请求
         String isTrueSecretStr = getOpenIdModel.getSecretStr();
 
@@ -49,9 +55,9 @@ public class AccountInfoServiceImpl implements AccountInfoService {
             JSONObject openIdJson = WXAppletUserInfo.getSessionKeyOropenid(weChatCode);
             String openId = openIdJson.getString("openid");
             String session_key = openIdJson.getString("session_key");
-            if(StringUtils.isEmpty(openId) && openIdJson.getString("errcode").equals("40163")){
+            if(StringUtils.isEmpty(openId)){
                 jsonObject.put("code",Constant.ERROR_CODE);
-                jsonObject.put("note","重复的wechatcode请求！");
+                jsonObject.put("note","获取openid失败！");
             }else {
                 AccountInfoModel accountInfoModel = new AccountInfoModel();
                 //1.判断数据库中是否存在openid
@@ -117,5 +123,17 @@ public class AccountInfoServiceImpl implements AccountInfoService {
         }
 
         return jsonObject;
+    }
+
+
+
+    @Override
+    public Integer distributeAccount() {
+        return accountInfoDao.distributeAccount();
+    }
+
+    @Override
+    public Integer oneDayDistributeAccount(String dateTime) {
+        return accountInfoDao.oneDayDistributeAccount(dateTime);
     }
 }

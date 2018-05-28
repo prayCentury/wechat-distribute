@@ -14,11 +14,11 @@ import java.util.Map;
 public class WXAppletUserInfo {
 
     //邓子乔
-//    private final static String appId = "wx1e53fbe27205d7a2";
-//    private final static String  appSecret = "e3d8cf19f0b49d2e45f189c73aa1fbb1";
+    private final static String appId = "wx1e53fbe27205d7a2";
+    private final static String  appSecret = "e3d8cf19f0b49d2e45f189c73aa1fbb1";
     //me
-    private final static String appId = "wx2711d84497f526e7";
-    private final static String  appSecret = "3533d97052b66969bd925947c94392d8";
+//    private final static String appId = "wx2711d84497f526e7";
+//    private final static String  appSecret = "3533d97052b66969bd925947c94392d8";
     private final static String  requestUrl = "https://api.weixin.qq.com/sns/jscode2session";
 
     /**
