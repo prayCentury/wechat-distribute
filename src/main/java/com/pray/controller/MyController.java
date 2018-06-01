@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.pray.model.AccountInfoModel;
 import com.pray.model.GetOpenIdModel;
 import com.pray.service.AccountInfoService;
+import com.pray.utils.FormatEmoji;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -66,6 +67,11 @@ public class MyController {
     public String getInfo(@ApiParam(name = "getOpenIdModel", value = "", required = true)
                               @RequestBody GetOpenIdModel getOpenIdModel){
         logger.debug(getOpenIdModel.toString());
+        String nick = "";
+        if(StringUtils.isNotEmpty(getOpenIdModel.getNickName())){
+            nick = FormatEmoji.filterEmoji(getOpenIdModel.getNickName());
+            getOpenIdModel.setNickName(nick);
+        }
         JSONObject jsonObject = accountInfoService.findByOpenId(getOpenIdModel);
         logger.debug("返回结果：" + jsonObject.toJSONString());
         return jsonObject.toJSONString();
